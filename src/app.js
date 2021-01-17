@@ -2,7 +2,6 @@ const express = require("express");
 const cors = require("cors");
 
 const { v4: uuid, validate: isUuid} = require('uuid');
-const e = require("cors");
 const { json } = require("express");
 
 const app = express();
@@ -14,12 +13,7 @@ const repositories = [];
 
 const findRepositoryIndex = (id) => repositories.findIndex(repository=>repository.id === id)
 
-const validateRepositoryId = (request, response, next) =>{
-	if (!isUuid(request.params.id)){
-		return response.status(400).json({error:"Invalid repository id"})
-	}
-  return next()
-}
+const validateRepositoryId = (request, response, next) => !isUuid(request.params.id) ? response.status(400).json({error:"Invalid repository id"}) : next()
 
 app.get("/repositories", (request, response) => {
   response.json(repositories)
@@ -69,9 +63,7 @@ app.post("/repositories/:id/like", validateRepositoryId, (request, response) => 
 
 	const repository = repositories[repositoryIndex]
 	repository.likes++
-
 	response.json(repository)
-	return
 });
 
 module.exports = app;
